@@ -80,8 +80,6 @@ export const LandingPage = () => {
         </Badge>
         
         <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent leading-tight">
-          India's First Blockchain
-          <br />
           Blue Carbon Registry
         </h1>
         
@@ -97,13 +95,6 @@ export const LandingPage = () => {
             className="gradient-primary text-white hover:opacity-90 px-8 py-3 text-lg"
           >
             Start Your Journey <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="border-primary text-primary hover:bg-primary/10 px-8 py-3 text-lg"
-          >
-            View Demo
           </Button>
         </div>
 

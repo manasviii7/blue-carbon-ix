@@ -281,6 +281,107 @@ export const IndustryDashboard = () => {
 
           {/* AI Advisor Tab */}
           <TabsContent value="ai-advisor" className="space-y-6">
+            {/* NGO Recommendations */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-secondary" />
+                  AI-Recommended NGO Partners
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <Card className="border-secondary/20 hover:border-secondary/40 transition-colors">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h4 className="font-semibold text-lg">Forest Department Maharashtra</h4>
+                          <p className="text-sm text-muted-foreground">Mangrove Restoration Specialist</p>
+                        </div>
+                        <Badge className="bg-secondary/10 text-secondary">95% Match</Badge>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span>Available Credits:</span>
+                          <span className="font-medium">8,500 credits</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Price Range:</span>
+                          <span className="font-medium text-green-500">₹95-100/credit</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>CO₂ Capacity:</span>
+                          <span className="font-medium">2,800 tons/year</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Location:</span>
+                          <span className="font-medium">West Bengal, Maharashtra</span>
+                        </div>
+                        <div className="pt-2">
+                          <p className="text-xs text-muted-foreground">
+                            🎯 Perfect for your 8,450 ton emissions. Verified projects with strong MRV track record.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full mt-4 gradient-secondary text-white hover:opacity-90">
+                        Connect with NGO
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-primary/20 hover:border-primary/40 transition-colors">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h4 className="font-semibold text-lg">Coastal Conservation Trust</h4>
+                          <p className="text-sm text-muted-foreground">Seagrass & Coastal Restoration</p>
+                        </div>
+                        <Badge className="bg-primary/10 text-primary">89% Match</Badge>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span>Available Credits:</span>
+                          <span className="font-medium">4,300 credits</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Price Range:</span>
+                          <span className="font-medium text-green-500">₹85-95/credit</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>CO₂ Capacity:</span>
+                          <span className="font-medium">1,050 tons/year</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Location:</span>
+                          <span className="font-medium">Odisha, Tamil Nadu</span>
+                        </div>
+                        <div className="pt-2">
+                          <p className="text-xs text-muted-foreground">
+                            🌊 Cost-effective option for partial emissions offset. Strong in seagrass restoration.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <Button className="w-full mt-4 gradient-primary text-white hover:opacity-90">
+                        Connect with NGO
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="mt-6 p-4 bg-accent/10 rounded-lg">
+                  <h4 className="font-semibold text-accent mb-2">AI Recommendation Summary</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Based on your 8,450 tons CO₂ emissions, we recommend purchasing 2,100 credits from Forest Department Maharashtra (primary) 
+                    and 1,500 credits from Coastal Conservation Trust (secondary) for optimal cost-effectiveness and regional impact.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <Card className="border-primary/20">
                 <CardContent className="p-6 text-center">

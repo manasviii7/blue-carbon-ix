@@ -236,36 +236,70 @@ export const NGODashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-secondary" />
-                  AI Ecosystem Prediction
+                  AI Ecosystem Prediction System
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-secondary/10 rounded-lg">
-                    <Trees className="h-8 w-8 text-secondary mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.treesPlanted.toLocaleString()}</p>
-                    <p className="text-sm text-muted-foreground">Trees Planted</p>
+                {/* Input Form */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="soilType">Soil Type</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select soil type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="alluvial">Alluvial</SelectItem>
+                        <SelectItem value="coastal">Coastal Sandy</SelectItem>
+                        <SelectItem value="clayey">Clayey</SelectItem>
+                        <SelectItem value="saline">Saline</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  
-                  <div className="text-center p-4 bg-primary/10 rounded-lg">
-                    <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.areaHectares}</p>
-                    <p className="text-sm text-muted-foreground">Area (Hectares)</p>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="treesCount">Number of Trees</Label>
+                    <Input 
+                      id="treesCount" 
+                      type="number" 
+                      placeholder="e.g., 12500"
+                      defaultValue="12500"
+                    />
                   </div>
-                  
-                  <div className="text-center p-4 bg-blue-500/10 rounded-lg">
-                    <Activity className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.annualRainfall}mm</p>
-                    <p className="text-sm text-muted-foreground">Annual Rainfall</p>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="areaSize">Area (Hectares)</Label>
+                    <Input 
+                      id="areaSize" 
+                      type="number" 
+                      placeholder="e.g., 450"
+                      defaultValue="450"
+                    />
                   </div>
-                  
-                  <div className="text-center p-4 bg-amber-500/10 rounded-lg">
-                    <Target className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.soilType}</p>
-                    <p className="text-sm text-muted-foreground">Soil Type</p>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="rainfall">Annual Rainfall (mm)</Label>
+                    <Input 
+                      id="rainfall" 
+                      type="number" 
+                      placeholder="e.g., 1200"
+                      defaultValue="1200"
+                    />
                   </div>
                 </div>
 
+                <Button 
+                  className="gradient-secondary text-white hover:opacity-90"
+                  onClick={() => toast({ 
+                    title: "AI Prediction Generated", 
+                    description: "Ecosystem analysis completed with updated recommendations" 
+                  })}
+                >
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Generate AI Prediction
+                </Button>
+
+                {/* Prediction Results */}
                 <div className="grid md:grid-cols-3 gap-6">
                   <Card className="border-secondary/30">
                     <CardContent className="p-6 text-center">
@@ -290,6 +324,33 @@ export const NGODashboard = () => {
                       <p className="text-sm text-muted-foreground">Best for this region</p>
                     </CardContent>
                   </Card>
+                </div>
+
+                {/* Environmental Factors Display */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-secondary/10 rounded-lg">
+                    <Trees className="h-8 w-8 text-secondary mx-auto mb-2" />
+                    <p className="text-lg font-bold">{ecosystemPrediction.treesPlanted.toLocaleString()}</p>
+                    <p className="text-sm text-muted-foreground">Trees Planted</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-primary/10 rounded-lg">
+                    <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <p className="text-lg font-bold">{ecosystemPrediction.areaHectares}</p>
+                    <p className="text-sm text-muted-foreground">Area (Hectares)</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-blue-500/10 rounded-lg">
+                    <Activity className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                    <p className="text-lg font-bold">{ecosystemPrediction.annualRainfall}mm</p>
+                    <p className="text-sm text-muted-foreground">Annual Rainfall</p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-amber-500/10 rounded-lg">
+                    <Target className="h-8 w-8 text-amber-500 mx-auto mb-2" />
+                    <p className="text-lg font-bold">{ecosystemPrediction.soilType}</p>
+                    <p className="text-sm text-muted-foreground">Soil Type</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -434,7 +495,7 @@ export const NGODashboard = () => {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Generate MRV Report
+                  Generate MRV Report with Carbon Calculator
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -466,6 +527,64 @@ export const NGODashboard = () => {
                     </Select>
                   </div>
                 </div>
+
+                {/* Integrated Carbon Calculator */}
+                <Card className="border-primary/20">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Project Carbon Assessment
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="biomassData">Biomass Data (tons)</Label>
+                        <Input 
+                          id="biomassData" 
+                          type="number" 
+                          placeholder="e.g., 850"
+                          defaultValue="850"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="sedimentCarbon">Sediment Carbon (tons)</Label>
+                        <Input 
+                          id="sedimentCarbon" 
+                          type="number" 
+                          placeholder="e.g., 1250"
+                          defaultValue="1250"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="survivalRate">Tree Survival Rate (%)</Label>
+                        <Input 
+                          id="survivalRate" 
+                          type="number" 
+                          placeholder="e.g., 92"
+                          defaultValue="92"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-secondary">2,800</p>
+                        <p className="text-sm text-muted-foreground">tons CO₂ sequestered</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-primary">150</p>
+                        <p className="text-sm text-muted-foreground">credits generated</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-green-500">₹15.0L</p>
+                        <p className="text-sm text-muted-foreground">estimated value</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
                 <div className="space-y-2">
                   <Label htmlFor="monitoringData">Upload Monitoring Data</Label>
