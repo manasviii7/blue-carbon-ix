@@ -109,8 +109,8 @@ export const CarbonCalculator = ({ onCalculate }: CarbonCalculatorProps) => {
     // Convert to tons
     totalEmissions = Math.round(totalEmissions / 1000);
 
-    // Calculate credits needed (1 credit = 1 ton CO2)
-    const creditsNeeded = Math.ceil(totalEmissions * 1.1); // 10% buffer
+    // Calculate credits needed (1 credit = 1 metric ton CO2)
+    const creditsNeeded = totalEmissions; // 1 metric ton CO2 = 1 credit
 
     // Generate recommendations
     const recommendations = [];
@@ -144,7 +144,7 @@ export const CarbonCalculator = ({ onCalculate }: CarbonCalculatorProps) => {
 
     toast({
       title: "Carbon Footprint Calculated",
-      description: `Total emissions: ${totalEmissions} tons CO₂. Credits needed: ${creditsNeeded}`,
+      description: `Total emissions: ${totalEmissions} tons CO₂. Credits needed: ${creditsNeeded} (1 metric ton CO₂ = 1 credit)`,
     });
   };
 

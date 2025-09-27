@@ -325,7 +325,13 @@ export const IndustryDashboard = () => {
                         </div>
                       </div>
                       
-                      <Button className="w-full mt-4 gradient-secondary text-white hover:opacity-90">
+                      <Button 
+                        className="w-full mt-4 gradient-secondary text-white hover:opacity-90"
+                        onClick={() => toast({
+                          title: "NGO Connection Initiated",
+                          description: "Connecting with Forest Department Maharashtra for carbon credit partnership",
+                        })}
+                      >
                         Connect with NGO
                       </Button>
                     </CardContent>
@@ -365,7 +371,13 @@ export const IndustryDashboard = () => {
                         </div>
                       </div>
                       
-                      <Button className="w-full mt-4 gradient-primary text-white hover:opacity-90">
+                      <Button 
+                        className="w-full mt-4 gradient-primary text-white hover:opacity-90"
+                        onClick={() => toast({
+                          title: "NGO Connection Initiated", 
+                          description: "Connecting with Coastal Conservation Trust for seagrass credit partnership",
+                        })}
+                      >
                         Connect with NGO
                       </Button>
                     </CardContent>
@@ -547,7 +559,25 @@ export const IndustryDashboard = () => {
                   </div>
                 </div>
                 
-                <Button className="gradient-primary text-white hover:opacity-90">
+                <Button 
+                  className="gradient-primary text-white hover:opacity-90"
+                  onClick={() => {
+                    const creditAmount = (document.getElementById('creditAmount') as HTMLInputElement)?.value;
+                    const maxPrice = (document.getElementById('maxPrice') as HTMLInputElement)?.value;
+                    if (creditAmount && maxPrice) {
+                      toast({
+                        title: "Bulk Order Submitted",
+                        description: `Order for ${creditAmount} credits at ₹${maxPrice} max per credit has been submitted`,
+                      });
+                    } else {
+                      toast({
+                        title: "Missing Information",
+                        description: "Please fill in credit amount and max price",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Submit Bulk Order
                 </Button>

@@ -29,6 +29,18 @@ import { useToast } from "@/hooks/use-toast";
 export const NGODashboard = () => {
   const { toast } = useToast();
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [addedProjects, setAddedProjects] = useState<any[]>([]);
+  const [ecosystemData, setEcosystemData] = useState({
+    soilType: '',
+    treesCount: 0,
+    areaSize: 0,
+    rainfall: 0
+  });
+  const [predictionResults, setPredictionResults] = useState({
+    co2PerYear: 0,
+    creditsNeeded: 0,
+    recommendedEcosystem: ''
+  });
 
   // Sample data
   const ecosystemPrediction = {
@@ -83,8 +95,56 @@ export const NGODashboard = () => {
 
   const handleGenerateMRV = () => {
     toast({
-      title: "MRV Report Generated",
-      description: "Report has been submitted for verification",
+      title: "MRV Report Downloaded Successfully",
+      description: "Your MRV report has been generated and downloaded",
+    });
+  };
+
+  const handleAddProject = (projectData: any) => {
+    const newProject = {
+      id: Date.now().toString(),
+      ...projectData,
+      status: 'pending',
+      dateAdded: new Date().toISOString().split('T')[0]
+    };
+    setAddedProjects(prev => [...prev, newProject]);
+    toast({
+      title: "Project Saved Successfully",
+      description: `${projectData.name} has been added to your projects`,
+    });
+  };
+
+  const generateAIPrediction = () => {
+    if (!ecosystemData.soilType || !ecosystemData.treesCount || !ecosystemData.areaSize || !ecosystemData.rainfall) {
+      toast({
+        title: "Missing Data",
+        description: "Please fill in all ecosystem prediction fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // AI prediction logic based on input data
+    const baseCO2 = ecosystemData.treesCount * 0.25; // Trees CO2 absorption
+    const areaBonus = ecosystemData.areaSize * 2.5; // Area factor
+    const rainfallBonus = Math.min(ecosystemData.rainfall / 100, 15); // Rainfall factor
+    const soilBonus = ecosystemData.soilType === 'alluvial' ? 1.2 : ecosystemData.soilType === 'coastal' ? 1.1 : 1.0;
+    
+    const predictedCO2 = Math.round((baseCO2 + areaBonus + rainfallBonus) * soilBonus);
+    const creditsNeeded = Math.ceil(predictedCO2 * 0.1);
+    const ecosystem = ecosystemData.soilType === 'alluvial' ? 'Mangrove Restoration' : 
+                     ecosystemData.soilType === 'coastal' ? 'Seagrass Conservation' : 
+                     'Mixed Coastal Ecosystem';
+
+    setPredictionResults({
+      co2PerYear: predictedCO2,
+      creditsNeeded,
+      recommendedEcosystem: ecosystem
+    });
+
+    toast({
+      title: "AI Prediction Generated",
+      description: `Predicted ${predictedCO2} tons CO₂/year sequestration`,
     });
   };
 
@@ -244,7 +304,9 @@ export const NGODashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="soilType">Soil Type</Label>
-                    <Select>
+                    <Select value={ecosystemData.soilType} onValueChange={(value) => 
+                      setEcosystemData(prev => ({ ...prev, soilType: value }))
+                    }>
                       <SelectTrigger>
                         <SelectValue placeholder="Select soil type" />
                       </SelectTrigger>
@@ -263,7 +325,11 @@ export const NGODashboard = () => {
                       id="treesCount" 
                       type="number" 
                       placeholder="e.g., 12500"
-                      defaultValue="12500"
+                      value={ecosystemData.treesCount}
+                      onChange={(e) => setEcosystemData(prev => ({ 
+                        ...prev, 
+                        treesCount: parseInt(e.target.value) || 0 
+                      }))}
                     />
                   </div>
 
@@ -273,7 +339,11 @@ export const NGODashboard = () => {
                       id="areaSize" 
                       type="number" 
                       placeholder="e.g., 450"
-                      defaultValue="450"
+                      value={ecosystemData.areaSize}
+                      onChange={(e) => setEcosystemData(prev => ({ 
+                        ...prev, 
+                        areaSize: parseInt(e.target.value) || 0 
+                      }))}
                     />
                   </div>
 
@@ -283,17 +353,18 @@ export const NGODashboard = () => {
                       id="rainfall" 
                       type="number" 
                       placeholder="e.g., 1200"
-                      defaultValue="1200"
+                      value={ecosystemData.rainfall}
+                      onChange={(e) => setEcosystemData(prev => ({ 
+                        ...prev, 
+                        rainfall: parseInt(e.target.value) || 0 
+                      }))}
                     />
                   </div>
                 </div>
 
                 <Button 
                   className="gradient-secondary text-white hover:opacity-90"
-                  onClick={() => toast({ 
-                    title: "AI Prediction Generated", 
-                    description: "Ecosystem analysis completed with updated recommendations" 
-                  })}
+                  onClick={generateAIPrediction}
                 >
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Generate AI Prediction
@@ -304,7 +375,7 @@ export const NGODashboard = () => {
                   <Card className="border-secondary/30">
                     <CardContent className="p-6 text-center">
                       <h3 className="font-semibold mb-2">CO₂ Sequestration Prediction</h3>
-                      <p className="text-3xl font-bold text-secondary">{ecosystemPrediction.co2PerYear}</p>
+                      <p className="text-3xl font-bold text-secondary">{predictionResults.co2PerYear || ecosystemPrediction.co2PerYear}</p>
                       <p className="text-sm text-muted-foreground">tons CO₂/year</p>
                     </CardContent>
                   </Card>
@@ -312,7 +383,7 @@ export const NGODashboard = () => {
                   <Card className="border-primary/30">
                     <CardContent className="p-6 text-center">
                       <h3 className="font-semibold mb-2">Credits Needed to Purchase</h3>
-                      <p className="text-3xl font-bold text-primary">{ecosystemPrediction.creditsNeeded}</p>
+                      <p className="text-3xl font-bold text-primary">{predictionResults.creditsNeeded || ecosystemPrediction.creditsNeeded}</p>
                       <p className="text-sm text-muted-foreground">carbon credits</p>
                     </CardContent>
                   </Card>
@@ -320,7 +391,7 @@ export const NGODashboard = () => {
                   <Card className="border-accent/30">
                     <CardContent className="p-6 text-center">
                       <h3 className="font-semibold mb-2">Recommended Ecosystem</h3>
-                      <p className="text-lg font-bold text-accent">{ecosystemPrediction.recommendedEcosystem}</p>
+                      <p className="text-lg font-bold text-accent">{predictionResults.recommendedEcosystem || ecosystemPrediction.recommendedEcosystem}</p>
                       <p className="text-sm text-muted-foreground">Best for this region</p>
                     </CardContent>
                   </Card>
@@ -330,25 +401,25 @@ export const NGODashboard = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-secondary/10 rounded-lg">
                     <Trees className="h-8 w-8 text-secondary mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.treesPlanted.toLocaleString()}</p>
+                    <p className="text-lg font-bold">{ecosystemData.treesCount || ecosystemPrediction.treesPlanted.toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">Trees Planted</p>
                   </div>
                   
                   <div className="text-center p-4 bg-primary/10 rounded-lg">
                     <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.areaHectares}</p>
+                    <p className="text-lg font-bold">{ecosystemData.areaSize || ecosystemPrediction.areaHectares}</p>
                     <p className="text-sm text-muted-foreground">Area (Hectares)</p>
                   </div>
                   
                   <div className="text-center p-4 bg-blue-500/10 rounded-lg">
                     <Activity className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.annualRainfall}mm</p>
+                    <p className="text-lg font-bold">{ecosystemData.rainfall || ecosystemPrediction.annualRainfall}mm</p>
                     <p className="text-sm text-muted-foreground">Annual Rainfall</p>
                   </div>
                   
                   <div className="text-center p-4 bg-amber-500/10 rounded-lg">
                     <Target className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                    <p className="text-lg font-bold">{ecosystemPrediction.soilType}</p>
+                    <p className="text-lg font-bold">{ecosystemData.soilType || ecosystemPrediction.soilType}</p>
                     <p className="text-sm text-muted-foreground">Soil Type</p>
                   </div>
                 </div>
@@ -441,50 +512,110 @@ export const NGODashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="projectName">Project Name</Label>
-                    <Input id="projectName" placeholder="e.g., Mangrove Restoration Phase 2" />
+                <form id="projectForm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="projectName">Project Name</Label>
+                      <Input 
+                        id="projectName" 
+                        name="projectName"
+                        placeholder="e.g., Mangrove Restoration Phase 2"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="location">Location</Label>
+                      <Input id="location" name="location" placeholder="e.g., Sundarbans, West Bengal" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="ecosystem">Ecosystem Type</Label>
+                      <Select name="ecosystem">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select ecosystem type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="mangrove">Mangrove</SelectItem>
+                          <SelectItem value="seagrass">Seagrass</SelectItem>
+                          <SelectItem value="marsh">Tidal Marsh</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="area">Area (Hectares)</Label>
+                      <Input id="area" name="area" type="number" placeholder="e.g., 250" />
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input id="location" placeholder="e.g., Sundarbans, West Bengal" />
+                    <Label htmlFor="description">Project Description</Label>
+                    <Textarea 
+                      id="description" 
+                      name="description"
+                      placeholder="Describe the project objectives, timeline, and expected outcomes..."
+                      rows={4}
+                    />
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="ecosystem">Ecosystem Type</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select ecosystem type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mangrove">Mangrove</SelectItem>
-                        <SelectItem value="seagrass">Seagrass</SelectItem>
-                        <SelectItem value="marsh">Tidal Marsh</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="area">Area (Hectares)</Label>
-                    <Input id="area" type="number" placeholder="e.g., 250" />
-                  </div>
-                </div>
+                </form>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Project Description</Label>
-                  <Textarea 
-                    id="description" 
-                    placeholder="Describe the project objectives, timeline, and expected outcomes..."
-                    rows={4}
-                  />
-                </div>
-                
-                <Button className="gradient-secondary text-white hover:opacity-90">
+                <Button 
+                  className="gradient-secondary text-white hover:opacity-90"
+                  onClick={() => {
+                    const form = document.getElementById('projectForm') as HTMLFormElement;
+                    if (form) {
+                      const formData = new FormData(form);
+                      const projectData = {
+                        name: (document.getElementById('projectName') as HTMLInputElement)?.value || '',
+                        location: (document.getElementById('location') as HTMLInputElement)?.value || '',
+                        ecosystem: (document.querySelector('[name="ecosystem"]') as HTMLSelectElement)?.value || '',
+                        area: (document.getElementById('area') as HTMLInputElement)?.value || '',
+                        description: (document.getElementById('description') as HTMLTextAreaElement)?.value || ''
+                      };
+                      if (projectData.name && projectData.location) {
+                        handleAddProject(projectData);
+                        form.reset();
+                      } else {
+                        toast({
+                          title: "Missing Information",
+                          description: "Please fill in all required fields",
+                          variant: "destructive"
+                        });
+                      }
+                    }
+                  }}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Register Project
                 </Button>
+
+                {/* Display Added Projects */}
+                {addedProjects.length > 0 && (
+                  <Card className="mt-6">
+                    <CardHeader>
+                      <CardTitle>Recently Added Projects</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {addedProjects.map((project) => (
+                          <div key={project.id} className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-secondary/5">
+                            <div>
+                              <h4 className="font-medium">{project.name}</h4>
+                              <p className="text-sm text-muted-foreground">{project.location} • {project.ecosystem}</p>
+                              <p className="text-xs text-muted-foreground">Added: {project.dateAdded}</p>
+                            </div>
+                            <Badge 
+                              variant="secondary"
+                              className="bg-orange-500/10 text-orange-500"
+                            >
+                              {project.status}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
